@@ -1,0 +1,7 @@
+name: tagGame
+main: de.Brogamer5000.tagGame.tagGame
+version: 1.0
+commands:
+   taggame:
+      description: Tag - Du bist!
+      usage: Syntax error! Bitte nutze /taggame help
