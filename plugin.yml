@@ -5,3 +5,8 @@ commands:
    taggame:
       description: Tag - Du bist!
       usage: Syntax error! Bitte nutze /taggame help
+permissions:
+   taggame.reset:
+      default: false
+   taggame.forceset:
+      default: false
