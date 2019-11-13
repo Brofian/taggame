@@ -54,18 +54,22 @@ public class CommandKit implements CommandExecutor{
 //......help Befehl....................//
 /////////////////////////////////////////		
 		if(action.equalsIgnoreCase("help") || action.equalsIgnoreCase("?")) {
+			
 			player.sendMessage("-------------- " + this.pluginPraefix + "--------------");
 			player.sendMessage(				"§6/taggame get §fNennt den aktuell getaggten Spieler");
 			player.sendMessage(				"§6/taggame get taboo §fListet alle Spieler aus der Tabu-Liste auf");
-			player.sendMessage(				"§6/taggame set <player> §fÜbergibt den Tag an den angegebenen Spieler");
 			player.sendMessage(				"§6/taggame help §fZeigt diese Liste");
+			
 			if(player.hasPermission("§6taggame.reset")) {
 				player.sendMessage(			"§6/taggame reset §fSetzt das Spiel zurück. Die Tabu Liste bleibt erhalten!");
 			}
+			
 			if(player.hasPermission("§6taggame.forceset")) {
 				player.sendMessage(			"§6/taggame forceset <player> §fÄndert den aktuell getaggten Spieler zum angegebenen Spieler");
 			}
+			
 			player.sendMessage("-------------- " + this.pluginPraefix + "--------------");
+			
 			return true;
 		}
 		
@@ -76,59 +80,18 @@ public class CommandKit implements CommandExecutor{
 		
 		
 		else if(action.equalsIgnoreCase("get")) {
+			
 			if(arg.equalsIgnoreCase("taboo")) { 
 				player.sendMessage(this.pluginPraefix + "Tabu sind folgende Spieler: " + this.taggedPlayer.getTabooList());
 			}
 			else {
 				player.sendMessage(this.pluginPraefix + "Aktuell getaggt ist: " + this.taggedPlayer.get());	
 			}
+			
 			return true;
+		
 		}
 		
-		
-		
-/* Unused development tool!!!		
-/////////////////////////////////////////
-//......set Befehl.....................//
-/////////////////////////////////////////
-		else if(action.equalsIgnoreCase("set")) {
-			String playername = player.getName();
-			
-			
-			
-			//deny access if user is not currently tagged
-			if(!this.taggedPlayer.isequalto(playername)) {
-				player.sendMessage(this.pluginPraefix + "Nur die getaggte Person kann jemand anderen taggen!");
-				return true;
-			}
-			
-			else {					
-				
-				//deny, if arg1 is no username
-				if(arg.equalsIgnoreCase("")) {
-					return false;
-				}
-				
-				//deny, if player tries to tag itself
-				if(arg.equalsIgnoreCase(playername)) {
-					player.sendMessage(this.pluginPraefix + "Du kannst dich nicht selbst taggen!");
-					return true;
-				}
-				
-				//deny if player tries to tag a player on the taboo list
-				if(this.taggedPlayer.isTaboo(arg)) {
-					player.sendMessage(this.pluginPraefix + arg + " steht auf der Tabu-Liste!");
-					return true;
-				}
-				
-				
-				this.taggedPlayer.set(arg);
-				player.sendMessage(this.pluginPraefix + "Du hast " + arg + " getaggt!");
-				return true;
-			}
-			
-		}
-*/		
 		
 		
 /////////////////////////////////////////
@@ -136,16 +99,23 @@ public class CommandKit implements CommandExecutor{
 /////////////////////////////////////////
 		
 		else if(action.equalsIgnoreCase("reset")) {
+			
 			if(player.hasPermission("taggame.reset")) {
+			
 				String playername = player.getName();
 
 				taggedPlayer.resetAll(playername);
-				player.sendMessage(this.pluginPraefix + "Das Tag Spiel wurde zurückgesetzt. Du bist nun getaggt!");
+				player.sendMessage(this.pluginPraefix + "Das Tag Spiel wurde zurückgesetzt. Du bist wurdest automatisch getaggt!");
+				
 				return true;
+				
 			}
 			else {
+				
 				return false;
+			
 			}
+			
 		}
 
 		
@@ -155,11 +125,26 @@ public class CommandKit implements CommandExecutor{
 /////////////////////////////////////////
 		
 		else if(action.equalsIgnoreCase("forceset")) {
+			//only allow access, if user has the permission
 			if(player.hasPermission("taggame.forceset")) {
-				taggedPlayer.forceSet(arg);
-				player.sendMessage(this.pluginPraefix + "Du hast " + arg + " zwangsweise als Tag markiert!");
-				return true;
+			
+				//return error, when no arg is given
+				if(arg.equalsIgnoreCase("") == true) {
+					
+					return false;
+				
+				}
+				else {
+				
+					taggedPlayer.forceSet(arg);
+					player.sendMessage(this.pluginPraefix + "Du hast " + arg + " zwangsweise als Tag markiert!");
+					
+					return true;	
+			
+				}
+				
 			}
+			
 		}
 		
 		
@@ -168,6 +153,7 @@ public class CommandKit implements CommandExecutor{
 /////////////////////////////////////////
 		
 		else if(action.equalsIgnoreCase("taboo")) {
+			
 			String playername = player.getName();
 
 			boolean wasSetToTaboo = this.taggedPlayer.toggleTaboo(playername);

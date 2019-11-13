@@ -18,39 +18,59 @@ public class TabComplete implements TabCompleter{
 			params.add(arg3[i]);
 		}
 		
-		
+		//create an empty List
 		List<String> hints = new ArrayList<String>();
 
 		
 		
 		
-		//Vorschläge für den ersten Eintrag
+		//If user is writing the first param of the command
 		if(params.size() == 1) {
+			
+			//add the basic suggestion
 			hints.add("get");
 			hints.add("taboo");
 			hints.add("help");
+			
+			//add the following two suggestions only, if player has the permissions
 			if(arg0.hasPermission("taggame.reset")) {
 				hints.add("reset");
 			}
+			
 			if(arg0.hasPermission("taggame.forceset")) {
 				hints.add("forceset");
 			}
+			
 		}
 		
+		
+		
+		
+		//If user is writing the second param of the command
 		else if(params.size() == 2) {
+			
+			//when first param was "get"
 			if(params.get(0).equalsIgnoreCase("get")) {
+				
 				hints.add("taboo");
-				hints.add("current");
+				hints.add("current"); //only used for completeness. Not used directly, but shows the player that there is more than one option
+			
 			}
 			
+			//if first param was "forceset"
 			else if(params.get(0).equalsIgnoreCase("forceset")) {
-				//show no hints, but instead the playerlist
+		
+				//show no hints, but instead the playerlist by returning null
 				return null;
+			
 			}
 			
 		}
 		
 		
+		
+		
+		//return the list of hints
         return hints;
         
 	}
