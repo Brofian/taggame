@@ -11,6 +11,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class tagStorage {
 
 	private File historyFile;
@@ -24,12 +25,13 @@ public class tagStorage {
 	
 	
 	public tagStorage(File history, File taboo) {
+		
 		this.historyFile = history;
 		this.tabooFile = taboo;
 		
 	
-		//create files, if they dont exist
-		if(this.historyFile.exists() == false) {
+		//test if file exists
+		if(this.historyFile.exists() == false || this.tabooFile.exists() == false) {
 			//create the File
 			try {
 				this.historyFile.createNewFile();
@@ -37,6 +39,7 @@ public class tagStorage {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			
 		}
 		
 	}
@@ -61,6 +64,12 @@ public class tagStorage {
 			
 			reader.close();
 			input.close();
+			
+			
+			//if no player was ever tagged, add a dummy player
+			if(this.historyList.size() == 0) {
+				this.historyList.add("dummyPlayer - Please use /taggame reset");
+			}
 		
 			
 			//load taboo Listed Players
@@ -87,7 +96,7 @@ public class tagStorage {
 	public void save() {
 		
 		try {
-			//add the current tagged player to the history file
+			//save the history to the history-file
 			FileWriter stream = new FileWriter(this.historyFile, false);
 			BufferedWriter out = new BufferedWriter(stream);
 			
@@ -102,7 +111,7 @@ public class tagStorage {
 			stream.close();
 
 			
-			//save the current taboo list to the taboo file
+			//save the taboo list to the taboo file
 			FileWriter streamTaboo = new FileWriter(this.tabooFile, false);
 			BufferedWriter outTaboo = new BufferedWriter(streamTaboo);
 			
@@ -130,14 +139,13 @@ public class tagStorage {
 ///////////////////////////////////////////////////////////////////////	
 	
 	public boolean isequalto(String value) {
-		String savedName = this.historyList.get(this.historyList.size()-1).toLowerCase().trim();
-		String givenName = value.toLowerCase().trim();
-		if(savedName.equals(givenName)) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		
+		String savedName = this.historyList.get(this.historyList.size()-1).trim();
+		String givenName = value.trim();
+		
+		if(savedName.equalsIgnoreCase(givenName)) 	return true;
+		else 										return false;
+		
 	}
 	
 	
@@ -146,20 +154,18 @@ public class tagStorage {
 ///////////////////////////////////////////////////////////////////////
 
 	
-	public void set(String value) {
-		this.historyList.add(value);
+	public void set(String playername) {
+	
+		this.historyList.add(playername);
 		this.save();
+	
 	}
 		
 	public String get() {
-		String value = this.historyList.get(this.historyList.size()-1);
-		if(value != null) {
-			return value;
-		}
-		else  {
-			return "";
-		}
 		
+		String value = (this.historyList.size() > 0) ? this.historyList.get(this.historyList.size()-1) : "unset";
+		return value;
+	
 	}
 	
 	
@@ -170,30 +176,26 @@ public class tagStorage {
 
 	
 	public boolean isTaboo(String value) {
-		if(this.tabooList.contains(value)) {
-			return true;
-		}
-		else {
-			return false;
-		}
+		
+		if(this.tabooList.contains(value)) return true;
+		else							   return false;
+		
 	}
 	
 	public boolean toggleTaboo(String value) {
-		if(this.tabooList.contains(value)) {
-			//nutzer steht auf der Taboo Liste, also entferne ihn
-			this.tabooList.remove(value);
-		}
-		else {
-			//nutzer steht nicht auf der Tabu Liste: also füge ihn hinzu
-			this.tabooList.add(value);
-		}
 		
-		this.save();		
+		if(this.tabooList.contains(value)) 	this.tabooList.remove(value);
+		else 								this.tabooList.add(value);
+		
 		return isTaboo(value);
 		
 	}
 	
+	
 	public String getTabooList() {
+		
+		
+		
 		String tabooString = "";
 		for(int i = 0; i < this.tabooList.size(); i++) {
 			if(i > 0) {
@@ -202,6 +204,7 @@ public class tagStorage {
 			tabooString += this.tabooList.get(i);
 		}
 		return tabooString;
+	
 	}
 	
 	
@@ -216,19 +219,26 @@ public class tagStorage {
 		//declare new tagged player: the user, that runs this
 		this.historyList.clear();
 		this.historyList.add(newTaggedPlayer);
-		this.save();
+		
 	}
 
 	
 	
-	public void forceSet(String newTaggedPlayer) {
+	public boolean forceSet(String newTaggedPlayer) {
 		
 	    if(this.historyList.size() > 0) {
-	    	this.historyList.remove(this.historyList.size()-1);
+	    	
+		    int i = this.historyList.size()-1;
+		    this.historyList.set(i, newTaggedPlayer);
+		    
+		    return true;
+	    
 	    }
-		this.historyList.add(newTaggedPlayer);
-		
-		this.save();
+	    else {
+	    	
+	    	return false;
+	    	
+	    }
 	}
 	
 }
